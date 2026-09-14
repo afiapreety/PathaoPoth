@@ -87,4 +87,4 @@ export const server = http.createServer(async (req, res) => {
     return send(res, 404, { error: 'Not found' });
   } catch (error) { send(res, error.status || 400, { error: error.message || 'Request failed.' }); }
 });
-server.listen(Number(process.env.PORT || 8787), '127.0.0.1', () => console.log('PathaoPoth API listening on 127.0.0.1:' + (process.env.PORT || 8787)));
+server.listen(Number(process.env.PORT || 8787), '0.0.0.0', () => console.log('PathaoPoth API listening on 0.0.0.0:' + (process.env.PORT || 8787)));
