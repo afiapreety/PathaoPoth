@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; font-family: system-ui, sans-serif; }
+body { margin: 0; min-width: 320px; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+.loading-screen { display: grid; place-items: center; min-height: 100vh; background: #f6f7f3; }
+.loading-spinner, .spinner { width: 28px; height: 28px; border: 3px solid #e0e8da; border-top-color: #26764f; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.auth-screen { display: grid; place-items: center; min-height: 100vh; padding: 24px; background: #f6f7f3; }
+.auth-card { width: min(440px, 100%); padding: 28px; background: white; border: 1px solid #e0e8da; border-radius: 12px; }
+.auth-card h2 { font-size: 23px; margin-bottom: 16px; }
+.primary-button { background: #26764f; color: white; padding: 10px 16px; border-radius: 6px; margin-top: 16px; }
+.alert { padding: 12px; border: 1px solid #f0d0c9; border-radius: 6px; color: #a14e40; background: #fdf1ed; }
