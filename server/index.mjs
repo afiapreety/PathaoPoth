@@ -23,7 +23,8 @@ async function principal(req) {
   if (!cookie && !bearer) throw Object.assign(new Error('Sign in to continue.'), { status: 401 });
   const client = createBlocksClient({ apiUrl: gateway, xBlocksKey: tenant, accessToken: bearer, fetch: async (url, options = {}) => {
     const headers = new Headers(options.headers); if (cookie) headers.set('cookie', cookie);
-    headers.set('Origin', 'https://pbngdj-elhjx.slsblx.com:5173');
+    const proto = req.headers['x-forwarded-proto']?.split(',')[0]?.trim() || 'https';
+    headers.set('Origin', req.headers.origin || (req.headers.host ? `${proto}://${req.headers.host}` : 'https://pbngdj-elhjx.slsblx.com'));
     const response = await fetch(url, { ...options, headers, signal: AbortSignal.timeout(15000) });
     if (!response.ok) throw new Error('Blocks rejected this session.');
     return response;
