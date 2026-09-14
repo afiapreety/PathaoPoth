@@ -42,8 +42,8 @@ ENV BLOCKS_X_BLOCKS_KEY=Sba0c99247e2e4e4091e1bfbcc3648396
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/server.mjs ./server.mjs
+COPY --from=builder /app/server ./server
 
 EXPOSE 8080
 
-CMD ["node", "server.mjs"]
+CMD ["node", "server/index.mjs"]
