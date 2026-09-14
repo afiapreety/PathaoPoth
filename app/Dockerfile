@@ -4,19 +4,19 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+RUN npm ci
 
 COPY . .
 
 ARG ci_build=dev
-ARG VITE_BLOCKS_API_URL
+ARG VITE_BLOCKS_API_URL=https://blocksapi.slsblx.com
 ARG VITE_BLOCKS_PROJECT_KEY
-ARG VITE_BLOCKS_X_BLOCKS_KEY
-ARG VITE_BLOCKS_APP_DOMAIN
+ARG VITE_BLOCKS_X_BLOCKS_KEY=Sba0c99247e2e4e4091e1bfbcc3648396
+ARG VITE_BLOCKS_APP_DOMAIN=https://sbgmze-eiuwy.slsblx.com
 ARG VITE_BLOCKS_OIDC_URL=https://iam.seliseblocks.com
-ARG VITE_BLOCKS_OIDC_CLIENT_ID
+ARG VITE_BLOCKS_OIDC_CLIENT_ID=4488fa83-b98b-4ab1-a3a6-fe9a4ae6ccf0
 ARG VITE_BLOCKS_OIDC_SCOPE="openid profile"
-ARG VITE_BLOCKS_REDIRECT_URI
+ARG VITE_BLOCKS_REDIRECT_URI=https://sbgmze-eiuwy.slsblx.com/login/callback
 ARG VITE_BLOCKS_HOSTED_LOGIN=true
 
 ENV VITE_BLOCKS_API_URL=${VITE_BLOCKS_API_URL}
@@ -29,16 +29,21 @@ ENV VITE_BLOCKS_OIDC_SCOPE=${VITE_BLOCKS_OIDC_SCOPE}
 ENV VITE_BLOCKS_REDIRECT_URI=${VITE_BLOCKS_REDIRECT_URI}
 ENV VITE_BLOCKS_HOSTED_LOGIN=${VITE_BLOCKS_HOSTED_LOGIN}
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode "${ci_build}" \
-  && node scripts/write-release-env.mjs "${ci_build}"
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build:${ci_build}
 
-FROM nginxinc/nginx-unprivileged:1.29-alpine
+FROM node:22-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+ENV NODE_ENV=production
+ENV PORT=8080
+ENV BLOCKS_API_URL=https://blocksapi.slsblx.com
+ENV BLOCKS_X_BLOCKS_KEY=Sba0c99247e2e4e4091e1bfbcc3648396
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/server.mjs ./server.mjs
 
 EXPOSE 8080
 
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-#   CMD wget -qO- http://localhost:8080/ || exit 1
+CMD ["node", "server.mjs"]
